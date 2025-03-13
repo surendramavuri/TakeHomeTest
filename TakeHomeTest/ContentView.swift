@@ -8,17 +8,15 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    var p1View = Page1View()
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
+
+            p1View
+     
     }
 }
 
 #Preview {
-    ContentView()
+    ContentView(p1View: Page1View())
 }
