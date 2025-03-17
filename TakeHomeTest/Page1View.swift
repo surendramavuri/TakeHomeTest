@@ -9,35 +9,22 @@ import SwiftUI
 
 struct Page1View: View {
     @State private var isNavigating = false
-    @StateObject private var viewModel = ShapeViewModel()
+    //@StateObject private var viewModel = ShapeViewModel()
+    @EnvironmentObject private var viewModel: ShapeViewModel
     
+    @State var button1text = ""
+   
     var body: some View {
        
         NavigationView {
             
             VStack {
                 
-                VStack {
-                    
-                    if viewModel.isLoading {
-                                       ProgressView("Loading...")
-                                           .progressViewStyle(CircularProgressViewStyle())
-                                   } else if let errorMessage = viewModel.errorMessage {
-                                       Text("Error: \(errorMessage)")
-                                           .foregroundColor(.red)
-                                   } else {
-                                       List(viewModel.shapes) { shape in
-                                           Text(shape.name)
-                                       }
-                                   }
-                }
-               
-                
                 HStack {
                     
                     Button(action: {
                         // Action to be performed when the button is tapped
-                        print("Clear All")
+                        viewModel.shapes = []
                     }) {
                         Text("Clear All")
                             .foregroundColor(Color.blue)
@@ -64,48 +51,55 @@ struct Page1View: View {
                 }
                 
                 
-                GridView()
+                GridView(isCirclesOnly: false)
                 
                 
                 HStack {
                     
+                    if viewModel.buttonArray.count > 0 {
+                        
+                        Button(action: {
+                            viewModel.shapes.append(Shapes(name: viewModel.buttonArray[0].name, draw_path: viewModel.buttonArray[0].draw_path))
+                        }) {
+                            Text(viewModel.buttonArray[0].name)
+                                .foregroundColor(Color.blue)
+                        }
+                        .padding()
+                    
+                    Spacer()
                     Button(action: {
-                        // Action to be performed when the button is tapped
-                        print("Button1")
+                        viewModel.shapes.append(Shapes(name: viewModel.buttonArray[1].name, draw_path: viewModel.buttonArray[1].draw_path))
                     }) {
-                        Text("Button1")
+                        Text(viewModel.buttonArray[1].name)
                             .foregroundColor(Color.blue)
                     }
                     .padding()
                     Spacer()
                     Button(action: {
-                        // Action to be performed when the button is tapped
-                        print("Button2")
+                        viewModel.shapes.append(Shapes(name: viewModel.buttonArray[2].name, draw_path: viewModel.buttonArray[2].draw_path))
                     }) {
-                        Text("Button2")
-                            .foregroundColor(Color.blue)
-                    }
-                    .padding()
-                    Spacer()
-                    Button(action: {
-                        // Action to be performed when the button is tapped
-                        print("Button3")
-                    }) {
-                        Text("Button3")
+                        Text(viewModel.buttonArray[2].name)
                             .foregroundColor(Color.blue)
                     }
                     .padding()
                     
+                    }
                     
                 }
             }
             
             .onAppear {
-                            // Start fetching data when the view appears
-                            Task {
-                                await viewModel.fetchShapes()
-                            }
+                // Start fetching data when the view appears
+                if viewModel.shapes.count == 0 {
+                    Task {
+                        await viewModel.fetchShapes()
+                        if viewModel.buttonArray.count == 0 {
+                            viewModel.buttonArray = viewModel.shapes
                         }
+                        
+                    }
+                }
+            }
             
             
         }

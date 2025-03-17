@@ -8,17 +8,19 @@
 import SwiftUI
 
 struct Page2View: View {
+    
+    @EnvironmentObject private var viewModel: ShapeViewModel
+    
     var body: some View {
         
         
-        GridView()
+        GridView(isCirclesOnly: true)
         
         
         HStack {
             
             Button(action: {
-                // Action to be performed when the button is tapped
-                print("Delete All")
+                viewModel.shapes = viewModel.shapes.filter { $0.draw_path != "circle" }
             }) {
                 Text("Delete All")
                     .foregroundColor(Color.blue)
@@ -26,8 +28,9 @@ struct Page2View: View {
             .padding()
             Spacer()
             Button(action: {
-                // Action to be performed when the button is tapped
-                print("Add")
+                
+                viewModel.shapes.append(Shapes(name: "Circle", draw_path: "circle"))
+                
             }) {
                 Text("Add")
                     .foregroundColor(Color.blue)
@@ -35,8 +38,11 @@ struct Page2View: View {
             .padding()
             Spacer()
             Button(action: {
-                // Action to be performed when the button is tapped
-                print("Remove")
+               
+                if let index = viewModel.shapes.lastIndex(where: { $0.name == "Circle" }) {
+                    viewModel.shapes.remove(at: index)
+                }
+               
             }) {
                 Text("Remove")
                     .foregroundColor(Color.blue)

@@ -9,26 +9,23 @@ import SwiftUI
 
 struct GridView: View {
     
+    @EnvironmentObject private var viewModel: ShapeViewModel
     // Define the grid's layout
         let columns = [
             GridItem(.flexible()),
             GridItem(.flexible()),
             GridItem(.flexible())
         ]
-    
-    enum Shape {
-        case circle, square, triangle
-    }
-    
-    var currentShape = Shape.triangle
+    var isCirclesOnly: Bool
+
     
     var body: some View {
         // A grid container
                 ScrollView {
                     LazyVGrid(columns: columns, spacing: 20) {
-                        ForEach(0..<15, id: \.self) { index in
+                        ForEach(0..<viewModel.shapes.count, id: \.self) { index in
                             // Create a circle shape for each grid item
-                            if currentShape == .circle {
+                            if viewModel.shapes[index].name == "Circle"  {
                                 Circle()
                                     .fill(Color.blue)
                                     .frame(width: 50, height: 50)
@@ -36,7 +33,8 @@ struct GridView: View {
                                         Text("\(index + 1)")
                                             .foregroundColor(.white)
                                     )
-                            } else if currentShape == .square {
+                                   
+                            } else if viewModel.shapes[index].name == "Square" && !isCirclesOnly {
                                 Rectangle()
                                     .fill(Color.blue)
                                     .frame(width: 50, height: 50)
@@ -44,7 +42,7 @@ struct GridView: View {
                                         Text("\(index + 1)")
                                             .foregroundColor(.white)
                                     )
-                            } else {
+                            } else if viewModel.shapes[index].name == "Triangle" && !isCirclesOnly {
                                 Triangle()
                                     .fill(Color.blue)
                                     .frame(width: 50, height: 50)
@@ -61,5 +59,5 @@ struct GridView: View {
 }
 
 #Preview {
-    GridView()
+    GridView(isCirclesOnly: false)
 }
